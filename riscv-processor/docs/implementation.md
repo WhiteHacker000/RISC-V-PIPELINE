@@ -5,58 +5,64 @@
 ### rtl/components/
 
 #### program_counter.sv
-- 32-bit program counter with synchronous reset
-- Input: next_pc, stall, flush
+- Parameterized program counter with asynchronous active-low reset
+- Increments by 4 when enabled; branch redirect has priority over stall
 - Output: current_pc
 
 #### register_file.sv
-- 32 x 32-bit registers (x0 hardwired to 0)
+- 32 x 32-bit registers (x0 always reads as 0 and ignores writes)
 - Two read ports, one write port
 - Synchronous write, asynchronous read
 
 #### alu.sv
-- 32-bit ALU supporting:
+- Existing 32-bit ALU supporting:
   - Arithmetic: ADD, SUB
   - Logical: AND, OR, XOR
-  - Shifts: SLL, SRL, SRA
   - Comparison: SLT, SLTU
-- Input: op_a, op_b, alu_control
-- Output: result, zero_flag
+- Input: operand_a, operand_b, alu_control
+- Output: alu_result, zero
 
 #### control_unit.sv
-- Main decoder + ALU decoder
-- Generates all control signals from opcode/funct3/funct7
+- Combines main opcode decoding with funct3/funct7 validation
+- Generates control and ALU signals for ADD, SUB, ADDI, LW, SW, BEQ, BNE
 - Combinational logic
 
 #### immediate_generator.sv
-- Generates 32-bit immediates for all formats:
-  - I-type: ADDI, loads, JALR
+- Generates sign-extended 32-bit immediates for:
+  - I-type: ADDI and loads
   - S-type: Stores
   - B-type: Branches
-  - U-type: LUI, AUIPC
-  - J-type: JAL
 
 #### instruction_memory.sv
 - Read-only memory for instructions
-- 32-bit address, 32-bit data
-- Combinational read
+- 32-bit instructions addressed by byte address; low two address bits must be zero
+- Optional INIT_FILE loaded with $readmemh; unwritten words default to NOP
+- Out-of-range and unaligned reads return NOP
 
 #### data_memory.sv
-- Read/write memory for data
-- 32-bit address, 32-bit data
-- Byte/half-word/word access with sign/zero extension
-- Synchronous write, asynchronous read
+- Word-only LW/SW memory with synchronous writes and asynchronous reads
+- Optional INIT_FILE loaded with $readmemh; unwritten words default to zero
+- Out-of-range or unaligned accesses do not modify memory and read as zero
 
 #### main_decoder.sv
-- Decodes opcode to main control signals
-- Part of control unit
+- Decodes instruction opcode into the main control signals
+- Used by control_unit.sv; funct fields are validated there
 
 ### rtl/pipeline_registers/
 
-Each pipeline register module:
-- Synchronous with active-low reset
-- Supports stall (hold) and flush (clear) signals
-- Passes all stage signals to next stage
+All four pipeline registers use positive-edge clocking and a synchronous
+active-low reset. Reset and flush clear the registered control/data fields;
+flush takes priority over stall.
+
+- **IF/ID** carries PC, PC+4, and instruction. A flush inserts the ADDI x0,x0,0
+  NOP; a stall holds the current instruction.
+- **ID/EX** carries PC, PC+4, both source values and register indices, the
+  immediate, destination index, ALU control, and execution/memory/write-back
+  controls. A stall holds the payload; a flush inserts a control-zero bubble.
+- **EX/MEM** carries the ALU result, store data, branch target/decision,
+  destination index, PC+4, and memory/register-write controls.
+- **MEM/WB** carries memory read data, ALU result, destination index, and
+  register-write/write-back-selection controls.
 
 ### rtl/stages/
 
@@ -72,23 +78,11 @@ Each stage module:
 - Connects hazard/forwarding units
 - Memory interfaces
 
-## Hazard Unit
+## Pipeline Integration Status
 
-### Forwarding Unit
-Detects RAW hazards and selects forwarded data:
-- EX hazard: EX/MEM.rd == ID/EX.rs1/rs2
-- MEM hazard: MEM/WB.rd == ID/EX.rs1/rs2
-- Priority: EX > MEM > Register File
-
-### Stall Unit
-Detects load-use hazard:
-- ID/EX.mem_read && (ID/EX.rd == IF/ID.rs1 || ID/ID.rs2)
-- Inserts 1-cycle stall
-
-### Flush Unit
-Flushes pipeline on taken branch:
-- EX stage branch_taken signal
-- Flushes IF/ID and ID/EX registers
+The component implementations above are not yet integrated into a processor top
+level. Forwarding, load-use stall detection, branch flush wiring, and top-level
+stage/pipeline-register connections remain to be implemented.
 
 ## Verification
 
