@@ -73,22 +73,29 @@ Each stage module:
 - No internal state (except IF stage PC)
 
 ### rtl/riscv_top.sv
-- Top-level integration
-- Instantiates all stages and pipeline registers
-- Connects hazard/forwarding units
-- Memory interfaces
+- Integrates the PC, instruction and data memories, register file, ALU,
+  control/immediate logic, and all four pipeline registers.
+- Implements EX/MEM and MEM/WB forwarding, decode-stage write-back bypass,
+  load-use interlocking, branch redirects, and wrong-path instruction flushes.
 
 ## Pipeline Integration Status
 
-The component implementations above are not yet integrated into a processor top
-level. Forwarding, load-use stall detection, branch flush wiring, and top-level
-stage/pipeline-register connections remain to be implemented.
+The top-level datapath is integrated for ADD, SUB, ADDI, LW, SW, BEQ, and BNE.
+Dedicated `forwarding_unit` and `hazard_detection_unit` modules now provide EX
+operand bypass selection and load-use interlocking. The integration testbench
+covers dependent arithmetic and memory operations, an independent instruction
+stream, load-use interlocking, and branch redirects.
+The processor is a focused educational implementation, not a complete RV32I
+implementation: exceptions, interrupts, byte/halfword memory operations, and
+other RV32I instructions are outside its scope.
 
 ## Verification
 
 ### Testbench Strategy
 - Unit testbenches for each component
-- Integration testbench for full pipeline
+- `testbench/processor_tb.sv` exercises full-pipeline integration
+- `testbench/forwarding_unit_tb.sv` and `testbench/hazard_detection_unit_tb.sv`
+  check arbitration, x0 exclusion, load suppression, stalls, and redirect priority
 - Test programs in programs/ directory
 
 ### Test Programs
@@ -103,7 +110,10 @@ stage/pipeline-register connections remain to be implemented.
 
 ## Synthesis Considerations
 
-- All memories inferred as block RAM
-- No latches (complete case/default in casez)
-- Synchronous resets for all registers
+- Memories use initialized arrays; physical memory inference depends on the
+  synthesis target and its supported read behavior.
+- No combinational latches are intended.
+- The PC has an asynchronous active-low reset; pipeline registers have
+  synchronous active-low resets. The register file and data memory have no
+  reset port.
 - Clock domain: single clock

@@ -1,90 +1,15 @@
-# Performance Analysis
+# Performance analysis
 
-## Pipeline Performance Metrics
+No CPI, IPC, throughput, or speedup result is published until actual retired-instruction, cycle, stall, branch-flush, and timing inputs are measured. The old percentage-based CPI estimate was removed because it was not derived from this processor's simulation.
 
-### CPI (Cycles Per Instruction)
+`verification/performance.py` accepts simulation counters and explicit timing inputs:
 
-| Scenario | CPI |
-|----------|-----|
-| Ideal (no hazards) | 1.0 |
-| With forwarding only | ~1.15 |
-| With forwarding + load-use stalls | ~1.25 |
-| With branch mispredictions | ~1.35 |
-
-### Hazard Impact Analysis
-
-#### Data Hazards
-- **RAW (Read After Write)**: Resolved by forwarding (0 cycles) or stall (1 cycle for load-use)
-- **WAR (Write After Read)**: Not possible in in-order pipeline
-- **WAW (Write After Write)**: Not possible in in-order pipeline
-
-#### Control Hazards
-- **Branch Taken**: 2-cycle penalty (flush IF/ID, ID/EX)
-- **Branch Not Taken**: 0-cycle penalty (static prediction)
-- **Jump (JAL/JALR)**: 2-cycle penalty
-
-#### Structural Hazards
-- None (separate instruction/data memory)
-
-### Branch Prediction
-
-| Predictor | Accuracy | Penalty (mispredict) |
-|-----------|----------|---------------------|
-| Static Not Taken | ~60% | 2 cycles |
-| Static Backward Taken | ~75% | 2 cycles |
-| 1-bit Dynamic | ~85% | 2 cycles |
-| 2-bit Dynamic | ~92% | 2 cycles |
-
-### Memory Access Patterns
-
-- **Instruction Memory**: Sequential access (high spatial locality)
-- **Data Memory**: Depends on program (stack, heap, globals)
-
-### Critical Path Analysis
-
-```
-IF:  PC register + IMEM access
-ID:  Register file read + Immediate gen + Control decode
-EX:  ALU operation (longest path)
-MEM: DMEM access
-WB:  Register file write + Mux
+```sh
+python3 riscv-processor/verification/performance.py \
+  --instructions N --cycles N --stalls N --branch-flushes N \
+  --execution-seconds S --single-cycle-ns NS --pipeline-cycle-ns NS
 ```
 
-**Critical Path**: EX stage ALU operation
-- Estimated: ~5-8 ns (depending on ALU complexity)
-- Max Frequency: ~125-200 MHz
+The report separates measured simulation values from timing-assumption estimates. CPI = cycles / instructions; IPC = instructions / cycles; host simulation throughput = instructions / measured host execution seconds. Estimated hardware execution time is instruction count × the assumed cycle period (single-cycle or pipelined), and estimated speedup is the ratio of those two modeled times. It is not a measured silicon speedup. `riscv_top` currently exposes no architectural retirement/performance counters, so users must collect correct counts in a verification harness before invoking the report.
 
-### Area Estimation
-
-| Component | Approx. Gates |
-|-----------|---------------|
-| Register File | 32 × 32-bit ≈ 8K |
-| ALU | ~2K |
-| Control Unit | ~1K |
-| Pipeline Registers | 4 × ~200 bits ≈ 800 |
-| Forwarding/Stall Logic | ~500 |
-| **Total** | **~12K gates** |
-
-### Power Considerations
-
-- Clock gating on pipeline registers during stall
-- Memory enable signals for inactive accesses
-- Operand isolation for ALU
-
-### Simulation Results
-
-*To be populated after simulation runs*
-
-| Test Program | Instructions | Cycles | CPI |
-|--------------|--------------|--------|-----|
-| arithmetic.hex | TBD | TBD | TBD |
-| memory.hex | TBD | TBD | TBD |
-| branch.hex | TBD | TBD | TBD |
-
-### Optimization Opportunities
-
-1. **Better Branch Prediction**: 2-bit bimodal predictor
-2. **Instruction Cache**: Reduce IMEM access latency
-3. **Data Cache**: Reduce DMEM access latency
-4. **Superscalar**: Dual-issue for independent instructions
-5. **Out-of-Order**: Dynamic scheduling for higher ILP
+Branch flush input counts redirect events; in this design each taken branch flushes the two younger instruction slots. Use the same definition consistently when comparing implementations. Clock periods must come from a stated critical-path/timing analysis; no timing constraint or technology-mapped timing result is included in this repository yet.
