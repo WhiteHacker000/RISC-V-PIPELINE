@@ -1,51 +1,44 @@
 #!/usr/bin/env python3
-"""
-Performance Analysis for RISC-V Pipelined Processor
-"""
+"""Report performance from explicitly supplied simulation counters and timing."""
+import argparse
+import json
 
-import sys
-import os
 
-def analyze_pipeline_performance():
-    """Analyze pipeline performance metrics"""
-    print("RISC-V Pipeline Performance Analysis")
-    print("=" * 40)
-    
-    # Ideal CPI
-    ideal_cpi = 1.0
-    print(f"Ideal CPI: {ideal_cpi}")
-    
-    # Hazard penalties
-    load_use_stall = 0.15  # 15% of instructions are load-use
-    branch_taken_rate = 0.20  # 20% branches taken
-    branch_penalty = 2  # cycles
-    
-    cpi_with_hazards = ideal_cpi + load_use_stall + (branch_taken_rate * branch_penalty)
-    print(f"CPI with hazards: {cpi_with_hazards:.2f}")
-    
-    # Frequency estimation
-    critical_path_ns = 6.5  # EX stage ALU
-    max_freq_mhz = 1000 / critical_path_ns
-    print(f"Estimated max frequency: {max_freq_mhz:.0f} MHz")
-    
-    # Throughput
-    throughput = max_freq_mhz / cpi_with_hazards
-    print(f"Instruction throughput: {throughput:.0f} MIPS")
-    
-    return {
-        'ideal_cpi': ideal_cpi,
-        'cpi_with_hazards': cpi_with_hazards,
-        'max_freq_mhz': max_freq_mhz,
-        'throughput_mips': throughput
-    }
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--instructions", type=int, required=True, help="retired instructions from simulation")
+    parser.add_argument("--cycles", type=int, required=True, help="elapsed clock cycles from simulation")
+    parser.add_argument("--stalls", type=int, required=True, help="stall cycles counted by simulation")
+    parser.add_argument("--branch-flushes", type=int, required=True, help="taken-branch flush events counted by simulation")
+    parser.add_argument("--execution-seconds", type=float, required=True, help="measured host simulation elapsed time")
+    parser.add_argument("--single-cycle-ns", type=float, required=True, help="single-cycle critical-path timing assumption")
+    parser.add_argument("--pipeline-cycle-ns", type=float, required=True, help="pipeline clock period assumption")
+    args = parser.parse_args()
+    if min(args.instructions, args.cycles) <= 0 or min(args.stalls, args.branch_flushes) < 0:
+        parser.error("instruction/cycle counts must be positive and event counts non-negative")
+    if min(args.execution_seconds, args.single_cycle_ns, args.pipeline_cycle_ns) <= 0:
+        parser.error("time measurements and timing assumptions must be positive")
+    pipeline_hw_seconds = args.cycles * args.pipeline_cycle_ns * 1e-9
+    single_hw_seconds = args.instructions * args.single_cycle_ns * 1e-9
+    print(json.dumps({
+        "measured_simulation": {
+            "instructions": args.instructions, "cycles": args.cycles,
+            "CPI": args.cycles / args.instructions,
+            "IPC": args.instructions / args.cycles,
+            "stall_cycles": args.stalls, "branch_flush_events": args.branch_flushes,
+            "host_execution_seconds": args.execution_seconds,
+            "host_simulation_throughput_instructions_per_second": args.instructions / args.execution_seconds,
+        },
+        "timing_assumption_estimates": {
+            "single_cycle_ns": args.single_cycle_ns,
+            "pipeline_cycle_ns": args.pipeline_cycle_ns,
+            "single_cycle_execution_seconds": single_hw_seconds,
+            "pipelined_execution_seconds": pipeline_hw_seconds,
+            "speedup": single_hw_seconds / pipeline_hw_seconds,
+            "estimated_pipeline_throughput_instructions_per_second": args.instructions / pipeline_hw_seconds,
+        }
+    }, indent=2))
 
-def main():
-    if len(sys.argv) > 1 and sys.argv[1] == '--json':
-        import json
-        result = analyze_pipeline_performance()
-        print(json.dumps(result, indent=2))
-    else:
-        analyze_pipeline_performance()
 
 if __name__ == "__main__":
     main()

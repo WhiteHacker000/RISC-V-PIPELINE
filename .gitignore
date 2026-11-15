@@ -1,0 +1,5 @@
+riscv-processor/build/
+riscv-processor/obj_dir/
+riscv-processor/simulation/*.vcd
+__pycache__/
+*.pyc
