@@ -10,6 +10,36 @@ module processor_tb;
     logic [2:0] three_addi_idex_seen;
     logic [2:0] three_addi_exmem_seen;
     logic [2:0] three_addi_memwb_seen;
+    integer performance_file;
+
+    task automatic report_benchmark(
+        input string name,
+        input logic [63:0] cycles,
+        input logic [63:0] retired,
+        input logic [63:0] completed_wb,
+        input logic [63:0] stalls,
+        input logic [63:0] branch_flushes,
+        input logic [63:0] taken_branches,
+        input logic [63:0] not_taken_branches
+    );
+        real cpi;
+        real ipc;
+        begin
+            if (retired == 0) begin
+                cpi = 0.0;
+                ipc = 0.0;
+            end else begin
+                cpi = real'(cycles) / real'(retired);
+                ipc = real'(retired) / real'(cycles);
+            end
+            $display("PERF,%s,cycles=%0d,retired=%0d,wb_completed=%0d,stalls=%0d,branch_flushes=%0d,taken=%0d,not_taken=%0d,CPI=%0.3f,IPC=%0.3f",
+                     name, cycles, retired, completed_wb, stalls,
+                     branch_flushes, taken_branches, not_taken_branches, cpi, ipc);
+            $fdisplay(performance_file, "%s,%0d,%0d,%0d,%0d,%0d,%0d,%0d",
+                      name, cycles, retired, completed_wb, stalls,
+                      branch_flushes, taken_branches, not_taken_branches);
+        end
+    endtask
 
     riscv_top #(
         .IMEM_INIT_FILE("programs/processor_dependencies.hex")
@@ -145,7 +175,15 @@ module processor_tb;
         $dumpfile("simulation/processor_tb.vcd");
         $dumpvars(0, processor_tb);
 
-        #12 rst_n = 1'b1;
+        @(posedge clk);
+        #1;
+        if (u_independent.perf_total_cycles != 0 ||
+            u_independent.perf_instructions_retired != 0 ||
+            u_independent.perf_stall_cycles != 0 ||
+            u_independent.perf_branch_flushes != 0 ||
+            u_independent.perf_instructions_completed_wb != 0)
+            $fatal(1, "performance counters did not clear during reset");
+        #6 rst_n = 1'b1;
         repeat (40) @(negedge clk);
         #1;
 
@@ -225,6 +263,62 @@ module processor_tb;
                  u_three_addi.u_register_file.registers[2],
                  u_three_addi.u_register_file.registers[3]);
         $display("PASS: three-ADDI forwarding and ordered write-back");
+
+        // Counter assertions cover normal flow, load-use bubbles, and branch flushes.
+        if (u_independent.perf_instructions_retired != 5 ||
+            u_independent.perf_instructions_completed_wb != 5 ||
+            u_independent.perf_stall_cycles != 0 ||
+            u_independent.perf_branch_flushes != 0 ||
+            u_independent.perf_total_cycles != 9)
+            $fatal(1, "independent benchmark counters incorrect");
+        if (u_dependencies.perf_instructions_retired != 6 ||
+            u_dependencies.perf_instructions_completed_wb != 6 ||
+            u_dependencies.perf_stall_cycles != 0 ||
+            u_dependencies.perf_total_cycles != 10)
+            $fatal(1, "dependent benchmark counters incorrect");
+        if (u_load_use.perf_instructions_retired != 4 ||
+            u_load_use.perf_instructions_completed_wb != 4 ||
+            u_load_use.perf_stall_cycles != 1 ||
+            u_load_use.perf_total_cycles != 9)
+            $fatal(1, "load-use bubble was miscounted or stall counter incorrect");
+        if (u_branches.perf_instructions_retired != 7 ||
+            u_branches.perf_instructions_completed_wb != 7 ||
+            u_branches.perf_branch_flushes != 2 ||
+            u_branches.perf_taken_branches != 2 ||
+            u_branches.perf_not_taken_branches != 1)
+            $fatal(1, "branch retirement/flush counters incorrect");
+        if (u_three_addi.perf_instructions_retired != 3 ||
+            u_three_addi.perf_instructions_completed_wb != 3 ||
+            u_three_addi.perf_total_cycles != 7 ||
+            u_three_addi.perf_stall_cycles != 0)
+            $fatal(1, "three-ADDI benchmark counters incorrect");
+
+        performance_file = $fopen("simulation/performance.csv", "w");
+        if (performance_file == 0)
+            $fatal(1, "could not create simulation/performance.csv");
+        $fdisplay(performance_file, "benchmark,cycles,retired,wb_completed,stalls,branch_flushes,taken_branches,not_taken_branches");
+        report_benchmark("independent", u_independent.perf_total_cycles,
+            u_independent.perf_instructions_retired, u_independent.perf_instructions_completed_wb,
+            u_independent.perf_stall_cycles, u_independent.perf_branch_flushes,
+            u_independent.perf_taken_branches, u_independent.perf_not_taken_branches);
+        report_benchmark("dependent", u_dependencies.perf_total_cycles,
+            u_dependencies.perf_instructions_retired, u_dependencies.perf_instructions_completed_wb,
+            u_dependencies.perf_stall_cycles, u_dependencies.perf_branch_flushes,
+            u_dependencies.perf_taken_branches, u_dependencies.perf_not_taken_branches);
+        report_benchmark("load_use", u_load_use.perf_total_cycles,
+            u_load_use.perf_instructions_retired, u_load_use.perf_instructions_completed_wb,
+            u_load_use.perf_stall_cycles, u_load_use.perf_branch_flushes,
+            u_load_use.perf_taken_branches, u_load_use.perf_not_taken_branches);
+        report_benchmark("branches", u_branches.perf_total_cycles,
+            u_branches.perf_instructions_retired, u_branches.perf_instructions_completed_wb,
+            u_branches.perf_stall_cycles, u_branches.perf_branch_flushes,
+            u_branches.perf_taken_branches, u_branches.perf_not_taken_branches);
+        report_benchmark("three_addi", u_three_addi.perf_total_cycles,
+            u_three_addi.perf_instructions_retired, u_three_addi.perf_instructions_completed_wb,
+            u_three_addi.perf_stall_cycles, u_three_addi.perf_branch_flushes,
+            u_three_addi.perf_taken_branches, u_three_addi.perf_not_taken_branches);
+        $fclose(performance_file);
+        $display("PASS: retirement, stall, bubble, and flush counter assertions");
 
         $display("PROCESSOR INTEGRATION TESTS PASSED");
         $finish;

@@ -7,15 +7,16 @@ PROJ := $(ROOT)/riscv-processor
 RTL := $(wildcard $(PROJ)/rtl/components/*.sv) $(wildcard $(PROJ)/rtl/pipeline_registers/*.sv) $(PROJ)/rtl/riscv_top.sv
 BUILD := $(PROJ)/build
 
-.PHONY: help build run test lint wave synth clean
+.PHONY: help build run test lint wave synth performance clean
 help:
-	@printf '%s\n' 'build  Compile processor integration simulation' 'run    Run processor simulation' 'test   Compile and execute all testbenches' 'lint   Run Verilator lint on processor' 'wave   Open processor waveform' 'synth  Run Yosys synthesis checks' 'clean  Remove build outputs'
+	@printf '%s\n' 'build       Compile processor integration simulation' 'run         Run processor simulation and report measured CPI/IPC' 'test        Compile and execute all testbenches' 'performance Analyze the latest simulation performance CSV' 'lint        Run Verilator lint on processor' 'wave        Open processor waveform' 'synth       Run Yosys synthesis checks' 'clean       Remove build outputs'
 
 build:
 	mkdir -p $(BUILD) $(PROJ)/simulation
 	cd $(PROJ) && $(VERILATOR) --binary --timing --trace --top-module processor_tb -Wno-fatal --Mdir $(BUILD)/processor_tb $(RTL) testbench/processor_tb.sv
 run: build
 	cd $(PROJ) && $(BUILD)/processor_tb/Vprocessor_tb
+	cd $(PROJ) && python3 verification/performance.py simulation/performance.csv
 
 test:
 	@set -eu; mkdir -p $(BUILD) $(PROJ)/simulation; \
@@ -24,7 +25,11 @@ test:
 	  if ! (cd $(PROJ) && $(VERILATOR) --binary --timing --trace --top-module $$tb -Wno-fatal --Mdir $(BUILD)/$$tb $(RTL) testbench/$$tb.sv); then echo "FAIL $$tb (compile)"; exit 1; fi; \
 	  if ! (cd $(PROJ) && $(BUILD)/$$tb/V$$tb); then echo "FAIL $$tb (simulation)"; exit 1; fi; \
 	  echo "PASS $$tb"; \
-	done
+	done; \
+	cd $(PROJ) && python3 verification/performance.py simulation/performance.csv
+
+performance:
+	cd $(PROJ) && python3 verification/performance.py simulation/performance.csv
 
 lint:
 	cd $(PROJ) && $(VERILATOR) --lint-only --timing --top-module riscv_top -Wall -Wno-fatal $(RTL)
