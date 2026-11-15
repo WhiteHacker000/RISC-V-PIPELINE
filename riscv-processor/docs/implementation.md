@@ -85,6 +85,10 @@ Dedicated `forwarding_unit` and `hazard_detection_unit` modules now provide EX
 operand bypass selection and load-use interlocking. The integration testbench
 covers dependent arithmetic and memory operations, an independent instruction
 stream, load-use interlocking, and branch redirects.
+Simulation-only observability in `riscv_top` tracks validity through all four
+pipeline registers and counts active benchmark cycles, retirement/WB completion,
+load-use stalls, and taken/not-taken branch outcomes without changing the
+architectural datapath.
 The processor is a focused educational implementation, not a complete RV32I
 implementation: exceptions, interrupts, byte/halfword memory operations, and
 other RV32I instructions are outside its scope.

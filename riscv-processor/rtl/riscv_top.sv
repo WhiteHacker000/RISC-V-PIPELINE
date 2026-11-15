@@ -87,6 +87,24 @@ module riscv_top #(
     logic stall_ifid;
     logic flush_idex;
 
+    // Validity travels beside the datapath so retirement excludes bubbles,
+    // flushed instructions, and the canonical NOP used to fill empty IMEM.
+    logic ifid_perf_valid;
+    logic idex_perf_valid;
+    logic exmem_perf_valid;
+    logic memwb_perf_valid;
+    logic perf_decode_valid;
+    logic perf_pipeline_active;
+    logic perf_started;
+    logic perf_done;
+    logic [63:0] perf_total_cycles;
+    logic [63:0] perf_instructions_retired;
+    logic [63:0] perf_stall_cycles;
+    logic [63:0] perf_branch_flushes;
+    logic [63:0] perf_instructions_completed_wb;
+    logic [63:0] perf_taken_branches;
+    logic [63:0] perf_not_taken_branches;
+
     assign pc_plus4 = pc_current + 32'd4;
     assign decode_opcode = ifid_instruction[6:0];
     assign decode_rd = ifid_instruction[11:7];
@@ -99,6 +117,67 @@ module riscv_top #(
     assign ex_branch_target = idex_pc + idex_immediate;
     assign ex_branch_taken = idex_branch &&
         (idex_branch_not_equal ? !ex_alu_zero : ex_alu_zero);
+    assign perf_decode_valid = ifid_perf_valid &&
+        (decode_reg_write || decode_mem_read || decode_mem_write || decode_branch);
+    assign perf_pipeline_active = ifid_perf_valid || idex_perf_valid ||
+        exmem_perf_valid || memwb_perf_valid ||
+        (instruction_fetch != 32'h0000_0013);
+
+    // Keep validity aligned with the four datapath pipeline registers.
+    // IF/ID holds valid during a stall; branch flush and ID/EX bubble have priority.
+    always_ff @(posedge clk) begin
+        if (!rst_n) begin
+            ifid_perf_valid <= 1'b0;
+            idex_perf_valid <= 1'b0;
+            exmem_perf_valid <= 1'b0;
+            memwb_perf_valid <= 1'b0;
+            perf_started <= 1'b0;
+            perf_done <= 1'b0;
+            perf_total_cycles <= 64'd0;
+            perf_instructions_retired <= 64'd0;
+            perf_stall_cycles <= 64'd0;
+            perf_branch_flushes <= 64'd0;
+            perf_instructions_completed_wb <= 64'd0;
+            perf_taken_branches <= 64'd0;
+            perf_not_taken_branches <= 64'd0;
+        end else begin
+            if (ex_branch_taken)
+                ifid_perf_valid <= 1'b0;
+            else if (!stall_ifid)
+                ifid_perf_valid <= (instruction_fetch != 32'h0000_0013);
+
+            if (flush_idex)
+                idex_perf_valid <= 1'b0;
+            else
+                idex_perf_valid <= perf_decode_valid;
+
+            exmem_perf_valid <= idex_perf_valid;
+            memwb_perf_valid <= exmem_perf_valid;
+
+            if (instruction_fetch != 32'h0000_0013)
+                perf_started <= 1'b1;
+            if (perf_started && !perf_pipeline_active)
+                perf_done <= 1'b1;
+            if (!perf_done && perf_pipeline_active)
+                perf_total_cycles <= perf_total_cycles + 64'd1;
+
+            // Retirement is the valid instruction present in WB at this edge.
+            if (memwb_perf_valid) begin
+                perf_instructions_retired <= perf_instructions_retired + 64'd1;
+                perf_instructions_completed_wb <= perf_instructions_completed_wb + 64'd1;
+            end
+            if (stall_pc)
+                perf_stall_cycles <= perf_stall_cycles + 64'd1;
+            if (ex_branch_taken)
+                perf_branch_flushes <= perf_branch_flushes + 64'd1;
+            if (idex_perf_valid && idex_branch) begin
+                if (ex_branch_taken)
+                    perf_taken_branches <= perf_taken_branches + 64'd1;
+                else
+                    perf_not_taken_branches <= perf_not_taken_branches + 64'd1;
+            end
+        end
+    end
 
     program_counter u_program_counter (
         .clk(clk),

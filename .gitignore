@@ -1,5 +1,6 @@
 riscv-processor/build/
 riscv-processor/obj_dir/
 riscv-processor/simulation/*.vcd
+riscv-processor/simulation/performance.csv
 __pycache__/
 *.pyc
