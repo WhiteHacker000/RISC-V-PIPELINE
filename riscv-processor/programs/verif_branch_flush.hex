@@ -1,0 +1,18 @@
+// verif_branch_flush: generated for testbench/pipeline_corner_tb.sv
+00000193  // 0x00 addi x3, x0, 0
+00300093  // 0x04 addi x1, x0, 3
+00000113  // 0x08 addi x2, x0, 0
+fff08093  // 0x0C loop: addi x1, x1, -1
+00110113  // 0x10 addi x2, x2, 1
+fe009ce3  // 0x14 bne  x1, x0, loop  ; backward branch: taken twice, then not taken
+00118193  // 0x18 addi x3, x3, 1     ; in bne shadow: must commit exactly once
+00600213  // 0x1C addi x4, x0, 6
+00600293  // 0x20 addi x5, x0, 6
+00520863  // 0x24 beq  x4, x5, +16   ; operands forwarded from MEM/WB and EX/MEM; taken
+00402023  // 0x28 sw   x4, 0(x0)     ; wrong path: memory write must be suppressed
+fc000ce3  // 0x2C beq  x0, x0, -40   ; wrong path branch to 0x04: must not redirect
+04200313  // 0x30 addi x6, x0, 66    ; never fetched
+00002383  // 0x34 lw   x7, 0(x0)     ; x7=0 proves the flushed store did not write
+00000463  // 0x38 beq  x0, x0, +8    ; unconditional taken
+06300493  // 0x3C addi x9, x0, 99    ; wrong path register write suppressed
+00438533  // 0x40 add  x10, x7, x4   ; target -> 6

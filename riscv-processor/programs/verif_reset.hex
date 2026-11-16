@@ -1,0 +1,7 @@
+// verif_reset: generated for testbench/pipeline_corner_tb.sv
+12300093  // addi x1, x0, 0x123
+01000113  // addi x2, x0, 0x10
+00112023  // sw   x1, 0(x2)      ; M[16]=0x123 (reset is asserted while this is in EX/MEM)
+001081b3  // add  x3, x1, x1     ; 0x246
+00012203  // lw   x4, 0(x2)      ; 0x123
+003202b3  // add  x5, x4, x3     ; load-use -> 0x369

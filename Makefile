@@ -20,7 +20,7 @@ run: build
 
 test:
 	@set -eu; mkdir -p $(BUILD) $(PROJ)/simulation; \
-	for tb in alu_tb register_file_tb immediate_generator_tb instruction_memory_tb data_memory_tb main_decoder_tb control_unit_tb program_counter_tb if_id_tb id_ex_tb ex_mem_tb mem_wb_tb forwarding_unit_tb hazard_detection_unit_tb processor_tb; do \
+	for tb in alu_tb register_file_tb immediate_generator_tb instruction_memory_tb data_memory_tb main_decoder_tb control_unit_tb program_counter_tb if_id_tb id_ex_tb ex_mem_tb mem_wb_tb forwarding_unit_tb hazard_detection_unit_tb processor_tb pipeline_corner_tb; do \
 	  echo "== $$tb =="; \
 	  if ! (cd $(PROJ) && $(VERILATOR) --binary --timing --trace --top-module $$tb -Wno-fatal --Mdir $(BUILD)/$$tb $(RTL) testbench/$$tb.sv); then echo "FAIL $$tb (compile)"; exit 1; fi; \
 	  if ! (cd $(PROJ) && $(BUILD)/$$tb/V$$tb); then echo "FAIL $$tb (simulation)"; exit 1; fi; \
