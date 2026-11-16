@@ -15,6 +15,15 @@ module hazard_detection_unit_tb;
         ifid_uses_rs2=1; ifid_rs2=5'd5; check(1,1); // second operand dependency
         idex_rd=0; ifid_rs1=0; ifid_rs2=0; check(0,0); // x0
         idex_rd=5'd5; branch_taken=1; check(0,1); // redirect wins, bubble decode
+        // Corner cases (added by verification coverage pass)
+        branch_taken=0; idex_mem_read=0; idex_rd=5'd5; ifid_rs1=5'd5; ifid_rs2=5'd5;
+        ifid_uses_rs1=1; ifid_uses_rs2=1; check(0,0); // ALU producer: forwarding, never a stall
+        idex_mem_read=1; check(1,1); // load feeding both operands
+        ifid_uses_rs1=0; ifid_uses_rs2=0; check(0,0); // fields match but unused (e.g. no-source decode)
+        ifid_uses_rs1=1; ifid_rs1=5'd6; ifid_uses_rs2=0; check(0,0); // ADDI-style: rs2 field matches, unused
+        ifid_uses_rs2=1; check(1,1); // SW-style: rs2 is store data, used
+        idex_mem_read=0; branch_taken=1; check(0,1); // taken branch without load: flush only
+        idex_rd=5'd31; ifid_rs1=5'd31; idex_mem_read=1; branch_taken=0; check(1,1); // x31 boundary
         $display("hazard_detection_unit_tb PASS"); $finish;
     end
 endmodule

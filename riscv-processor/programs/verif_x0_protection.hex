@@ -1,0 +1,11 @@
+// verif_x0_protection: generated for testbench/pipeline_corner_tb.sv
+00500013  // addi x0, x0, 5      ; write to x0 must be discarded
+000000b3  // add  x1, x0, x0     ; x0 in EX/MEM must not forward -> x1=0
+00000133  // add  x2, x0, x0     ; x0 in MEM/WB must not forward -> x2=0
+000001b3  // add  x3, x0, x0     ; x0 in WB must not bypass to ID -> x3=0
+00900213  // addi x4, x0, 9      ; x4=9
+00402023  // sw   x4, 0(x0)      ; M[0]=9
+00002003  // lw   x0, 0(x0)      ; load to x0 must be discarded
+004002b3  // add  x5, x0, x4     ; must NOT load-use stall on x0 -> x5=9
+40020033  // sub  x0, x4, x0     ; another discarded x0 write (9)
+40020333  // sub  x6, x4, x0     ; x6=9 (x0 still reads 0)
