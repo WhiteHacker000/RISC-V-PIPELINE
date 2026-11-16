@@ -60,7 +60,11 @@ make wave         # open the latest processor waveform in GTKWave
 ## Troubleshooting
 
 - **`verilator` or `yosys` not found:** install the tool and ensure it is on `PATH`, or pass its executable path with `VERILATOR=...` or `YOSYS=...`.
-- **C++ compile error such as `cstddef file not found` on macOS:** install the Xcode Command Line Tools with `xcode-select --install`, then retry. If macOS says they are already installed, update or reinstall them through Software Update or Apple's developer downloads.
+- **C++ compile error such as `cstddef file not found` on macOS:** install or update the Xcode Command Line Tools with `xcode-select --install`, then retry. If the error persists because Verilator's generated build cannot find libc++ headers in the selected SDK, pass the SDK include directory through `CXXFLAGS`:
+  ```sh
+  CXXFLAGS="-isystem $(xcrun --show-sdk-path)/usr/include/c++/v1" make test
+  ```
+  Use the same `CXXFLAGS=...` prefix with `make build` or `make run` when running those targets.
 - **`No processor waveform found`:** run `make run` or `make test` first.
 - **Performance CSV cannot be opened:** run `make run` or `make test` to produce it; `make clean` removes it.
 - **`make wave` cannot start GTKWave:** install GTKWave and ensure its launcher is on `PATH`, or use `make wave GTKWAVE=/path/to/gtkwave`. GTKWave requires a graphical desktop session.
