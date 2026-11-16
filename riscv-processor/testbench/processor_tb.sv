@@ -76,6 +76,13 @@ module processor_tb;
         .rst_n(rst_n)
     );
 
+    riscv_top #(
+        .IMEM_INIT_FILE("programs/processor_long_arithmetic.hex")
+    ) u_long_arithmetic (
+        .clk(clk),
+        .rst_n(rst_n)
+    );
+
     always #5 clk = ~clk;
 
     always @(negedge clk) begin
@@ -184,7 +191,7 @@ module processor_tb;
             u_independent.perf_instructions_completed_wb != 0)
             $fatal(1, "performance counters did not clear during reset");
         #6 rst_n = 1'b1;
-        repeat (40) @(negedge clk);
+        repeat (80) @(negedge clk);
         #1;
 
         if (u_dependencies.u_register_file.registers[1] !== 32'd10)
@@ -292,6 +299,18 @@ module processor_tb;
             u_three_addi.perf_total_cycles != 7 ||
             u_three_addi.perf_stall_cycles != 0)
             $fatal(1, "three-ADDI benchmark counters incorrect");
+        if (u_long_arithmetic.perf_instructions_retired != 64 ||
+            u_long_arithmetic.perf_instructions_completed_wb != 64 ||
+            u_long_arithmetic.perf_total_cycles != 68 ||
+            u_long_arithmetic.perf_stall_cycles != 0 ||
+            u_long_arithmetic.perf_branch_flushes != 0 ||
+            u_long_arithmetic.perf_taken_branches != 0 ||
+            u_long_arithmetic.perf_not_taken_branches != 0)
+            $fatal(1, "long arithmetic benchmark counters incorrect");
+        if (u_long_arithmetic.u_register_file.registers[1] !== 32'd63 ||
+            u_long_arithmetic.u_register_file.registers[2] !== 32'd64)
+            $fatal(1, "long arithmetic benchmark result mismatch");
+        $display("PASS: 64-instruction independent arithmetic stream");
 
         performance_file = $fopen("simulation/performance.csv", "w");
         if (performance_file == 0)
@@ -317,6 +336,11 @@ module processor_tb;
             u_three_addi.perf_instructions_retired, u_three_addi.perf_instructions_completed_wb,
             u_three_addi.perf_stall_cycles, u_three_addi.perf_branch_flushes,
             u_three_addi.perf_taken_branches, u_three_addi.perf_not_taken_branches);
+        report_benchmark("long_arithmetic", u_long_arithmetic.perf_total_cycles,
+            u_long_arithmetic.perf_instructions_retired,
+            u_long_arithmetic.perf_instructions_completed_wb,
+            u_long_arithmetic.perf_stall_cycles, u_long_arithmetic.perf_branch_flushes,
+            u_long_arithmetic.perf_taken_branches, u_long_arithmetic.perf_not_taken_branches);
         $fclose(performance_file);
         $display("PASS: retirement, stall, bubble, and flush counter assertions");
 

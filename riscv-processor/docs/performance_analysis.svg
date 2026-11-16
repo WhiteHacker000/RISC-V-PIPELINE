@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description" width="1080" height="408" viewBox="0 0 1080 408">
+<title id="title">Measured simulation CPI and IPC</title>
+<desc id="description">CPI and IPC calculated from the processor testbench CSV.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" fill="#222">
+<text x="540" y="28" text-anchor="middle" font-size="20" font-weight="bold">Measured pipeline performance (simulation)</text>
+<text x="540" y="52" text-anchor="middle" font-size="12">Derived from actual CSV cycle and retirement counters; not hardware timing.</text>
+<text x="272.5" y="78" text-anchor="middle" font-size="15" font-weight="bold">Cycles per retired instruction</text>
+<line x1="207" y1="90" x2="207" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="207" y="370" text-anchor="middle" font-size="11">0.00</text>
+<line x1="274" y1="90" x2="274" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="274" y="370" text-anchor="middle" font-size="11">0.62</text>
+<line x1="341" y1="90" x2="341" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="341" y="370" text-anchor="middle" font-size="11">1.25</text>
+<line x1="408" y1="90" x2="408" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="408" y="370" text-anchor="middle" font-size="11">1.88</text>
+<line x1="475" y1="90" x2="475" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="475" y="370" text-anchor="middle" font-size="11">2.50</text>
+<text x="20" y="117" font-size="12">Independent arithmetic</text>
+<rect x="207" y="103" width="192.96" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="118" font-size="12">1.8</text>
+<text x="20" y="159" font-size="12">Dependent arithmetic</text>
+<rect x="207" y="145" width="178.667" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="160" font-size="12">1.6667</text>
+<text x="20" y="201" font-size="12">Load-use dependency</text>
+<rect x="207" y="187" width="241.2" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="202" font-size="12">2.25</text>
+<text x="20" y="243" font-size="12">Taken/not-taken branches</text>
+<rect x="207" y="229" width="229.714" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="244" font-size="12">2.1429</text>
+<text x="20" y="285" font-size="12">Three dependent ADDI</text>
+<rect x="207" y="271" width="250.133" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="286" font-size="12">2.3333</text>
+<text x="20" y="327" font-size="12">Long arithmetic (64 ADDI)</text>
+<rect x="207" y="313" width="113.9" height="22" rx="2" fill="#3569a8"/>
+<text x="483" y="328" font-size="12">1.0625</text>
+<text x="807.5" y="78" text-anchor="middle" font-size="15" font-weight="bold">Retired instructions per cycle</text>
+<line x1="742" y1="90" x2="742" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="742" y="370" text-anchor="middle" font-size="11">0.00</text>
+<line x1="809" y1="90" x2="809" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="809" y="370" text-anchor="middle" font-size="11">0.25</text>
+<line x1="876" y1="90" x2="876" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="876" y="370" text-anchor="middle" font-size="11">0.50</text>
+<line x1="943" y1="90" x2="943" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="943" y="370" text-anchor="middle" font-size="11">0.75</text>
+<line x1="1010" y1="90" x2="1010" y2="350" stroke="#d9dde2" stroke-width="1"/>
+<text x="1010" y="370" text-anchor="middle" font-size="11">1.00</text>
+<text x="555" y="117" font-size="12">Independent arithmetic</text>
+<rect x="742" y="103" width="148.889" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="118" font-size="12">0.5556</text>
+<text x="555" y="159" font-size="12">Dependent arithmetic</text>
+<rect x="742" y="145" width="160.8" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="160" font-size="12">0.6</text>
+<text x="555" y="201" font-size="12">Load-use dependency</text>
+<rect x="742" y="187" width="119.111" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="202" font-size="12">0.4444</text>
+<text x="555" y="243" font-size="12">Taken/not-taken branches</text>
+<rect x="742" y="229" width="125.067" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="244" font-size="12">0.4667</text>
+<text x="555" y="285" font-size="12">Three dependent ADDI</text>
+<rect x="742" y="271" width="114.857" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="286" font-size="12">0.4286</text>
+<text x="555" y="327" font-size="12">Long arithmetic (64 ADDI)</text>
+<rect x="742" y="313" width="252.235" height="22" rx="2" fill="#35855b"/>
+<text x="1018" y="328" font-size="12">0.9412</text>
+</g>
+</svg>
