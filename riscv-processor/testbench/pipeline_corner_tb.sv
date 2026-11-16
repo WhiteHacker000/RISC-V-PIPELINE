@@ -170,7 +170,11 @@ module pipeline_corner_tb;
     integer x0_se, x0_fe, fwd_se, fwd_fe, chain_se, chain_fe;
     integer lu_se, lu_fe, br_se, br_fe, rst_se, rst_fe, ref_se, ref_fe;
 
+    // The register file has no reset (only x0 is architecturally defined), so
+    // never-written registers are compared against their post-reset value
+    // rather than 0. This keeps the bench valid under --x-initial unique.
     logic [31:0] x0_reg0_after_reset;
+    logic [31:0] lu_x9_after_reset, br_x6_after_reset, br_x9_after_reset;
     logic [5:0]  fwd_seen;
     logic [7:0]  chain_seen;
     integer      br_x3_writes;
@@ -327,6 +331,9 @@ module pipeline_corner_tb;
         `EXPECT_RESET_STATE(u_rst)
         `EXPECT_RESET_STATE(u_rst_ref)
         x0_reg0_after_reset = u_x0.u_register_file.registers[0];
+        lu_x9_after_reset = u_lu.u_register_file.registers[9];
+        br_x6_after_reset = u_br.u_register_file.registers[6];
+        br_x9_after_reset = u_br.u_register_file.registers[9];
         $display("PASS: cold reset clears PC, pipeline controls and counters");
 
         @(negedge clk);
@@ -418,7 +425,7 @@ module pipeline_corner_tb;
         `EXPECT_REG(u_lu, 6, 12)
         `EXPECT_REG(u_lu, 7, 4)
         `EXPECT_REG(u_lu, 8, 12)
-        `EXPECT_REG(u_lu, 9, 0)
+        `EXPECT_REG(u_lu, 9, lu_x9_after_reset)   // wrong path: never written
         `EXPECT_REG(u_lu, 10, 4)
         `EXPECT_REG(u_lu, 11, 10)
         `EXPECT_REG(u_lu, 12, 8)
@@ -435,9 +442,9 @@ module pipeline_corner_tb;
         `EXPECT_REG(u_br, 3, 1)
         `EXPECT_REG(u_br, 4, 6)
         `EXPECT_REG(u_br, 5, 6)
-        `EXPECT_REG(u_br, 6, 0)
+        `EXPECT_REG(u_br, 6, br_x6_after_reset)   // never fetched
         `EXPECT_REG(u_br, 7, 0)
-        `EXPECT_REG(u_br, 9, 0)
+        `EXPECT_REG(u_br, 9, br_x9_after_reset)   // wrong path: never written
         `EXPECT_REG(u_br, 10, 6)
         `EXPECT_MEM(u_br, 0, 0)
         if (br_x3_writes != 2)  // addi x3,x0,0 once + shadow addi x3,x3,1 once
