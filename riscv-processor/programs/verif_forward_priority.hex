@@ -1,0 +1,18 @@
+// verif_forward_priority: generated for testbench/pipeline_corner_tb.sv
+00100093  // addi x1, x0, 1      ; older x1
+00200093  // addi x1, x0, 2      ; younger x1
+00108133  // add  x2, x1, x1     ; both operands: EX/MEM (2) beats MEM/WB (1) -> 4
+00500213  // addi x4, x0, 5
+00700293  // addi x5, x0, 7
+40428333  // sub  x6, x5, x4     ; rs1 EX/MEM, rs2 MEM/WB -> 2
+00300413  // addi x8, x0, 3
+00b00493  // addi x9, x0, 11
+40940533  // sub  x10, x8, x9    ; rs1 MEM/WB, rs2 EX/MEM -> -8
+06400593  // addi x11, x0, 100   ; older x11
+0c800593  // addi x11, x0, 200   ; younger x11
+40b00633  // sub  x12, x0, x11   ; rs2-only priority -> -200
+05500713  // addi x14, x0, 0x55 ; older x14
+06600713  // addi x14, x0, 0x66 ; younger x14
+00e02223  // sw   x14, 4(x0)     ; store data EX/MEM priority -> M[4]=0x66
+00800793  // addi x15, x0, 8     ; base register
+0097a023  // sw   x9, 0(x15)     ; store base forwarded from EX/MEM -> M[8]=11

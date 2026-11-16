@@ -1,0 +1,13 @@
+// verif_dependency_chain: generated for testbench/pipeline_corner_tb.sv
+00100093  // addi x1, x0, 1
+00100113  // addi x2, x0, 1
+001101b3  // add  x3, x2, x1     ; rs1 dist1, rs2 dist2 -> 2
+00218233  // add  x4, x3, x2     ; -> 3
+003202b3  // add  x5, x4, x3     ; -> 5
+00428333  // add  x6, x5, x4     ; -> 8
+005303b3  // add  x7, x6, x5     ; -> 13
+00638433  // add  x8, x7, x6     ; -> 21
+006404b3  // add  x9, x8, x6     ; rs1 dist1, rs2 dist3 (WB->ID bypass) -> 29
+40948533  // sub  x10, x9, x9    ; same reg both operands -> 0
+fff50513  // addi x10, x10, -1   ; -> 0xFFFFFFFF
+409505b3  // sub  x11, x10, x9   ; -> -30
