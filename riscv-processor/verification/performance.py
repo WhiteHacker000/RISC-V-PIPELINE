@@ -37,6 +37,10 @@ def display_name(benchmark: str) -> str:
         "branches": "Taken/not-taken branches",
         "three_addi": "Three dependent ADDI",
         "long_arithmetic": "Long arithmetic (64 ADDI)",
+        "independent_50": "Independent arithmetic (50 instructions)",
+        "independent_100": "Independent arithmetic (100 instructions)",
+        "dependent_50": "Dependent arithmetic (50 instructions)",
+        "branch_heavy": "Branch-heavy loop",
     }
     return labels.get(benchmark, benchmark.replace("_", " ").title())
 

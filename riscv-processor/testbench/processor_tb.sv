@@ -42,46 +42,55 @@ module processor_tb;
     endtask
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_dependencies.hex")
+        .IMEM_INIT_FILE("programs/processor_dependencies.hex"), .IMEM_PROGRAM_LENGTH(6)
     ) u_dependencies (
         .clk(clk),
         .rst_n(rst_n)
     );
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_independent.hex")
+        .IMEM_INIT_FILE("programs/processor_independent.hex"), .IMEM_PROGRAM_LENGTH(5)
     ) u_independent (
         .clk(clk),
         .rst_n(rst_n)
     );
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_load_use.hex")
+        .IMEM_INIT_FILE("programs/processor_load_use.hex"), .IMEM_PROGRAM_LENGTH(4)
     ) u_load_use (
         .clk(clk),
         .rst_n(rst_n)
     );
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_branches.hex")
+        .IMEM_INIT_FILE("programs/processor_branches.hex"), .IMEM_PROGRAM_LENGTH(9)
     ) u_branches (
         .clk(clk),
         .rst_n(rst_n)
     );
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_three_addi.hex")
+        .IMEM_INIT_FILE("programs/processor_three_addi.hex"), .IMEM_PROGRAM_LENGTH(3)
     ) u_three_addi (
         .clk(clk),
         .rst_n(rst_n)
     );
 
     riscv_top #(
-        .IMEM_INIT_FILE("programs/processor_long_arithmetic.hex")
+        .IMEM_INIT_FILE("programs/processor_long_arithmetic.hex"), .IMEM_PROGRAM_LENGTH(64)
     ) u_long_arithmetic (
         .clk(clk),
         .rst_n(rst_n)
     );
+
+    riscv_top #(.IMEM_INIT_FILE("programs/processor_independent_50.hex"), .IMEM_PROGRAM_LENGTH(50))
+        u_independent_50 (.clk(clk), .rst_n(rst_n));
+    riscv_top #(.IMEM_INIT_FILE("programs/processor_independent_100.hex"), .IMEM_PROGRAM_LENGTH(100))
+        u_independent_100 (.clk(clk), .rst_n(rst_n));
+    riscv_top #(.IMEM_INIT_FILE("programs/processor_dependent_50.hex"), .IMEM_PROGRAM_LENGTH(50))
+        u_dependent_50 (.clk(clk), .rst_n(rst_n));
+    riscv_top #(.IMEM_INIT_FILE("programs/processor_branch_heavy.hex"), .IMEM_PROGRAM_LENGTH(5))
+        u_branch_heavy (.clk(clk), .rst_n(rst_n));
 
     always #5 clk = ~clk;
 
@@ -191,7 +200,7 @@ module processor_tb;
             u_independent.perf_instructions_completed_wb != 0)
             $fatal(1, "performance counters did not clear during reset");
         #6 rst_n = 1'b1;
-        repeat (80) @(negedge clk);
+        repeat (130) @(negedge clk);
         #1;
 
         if (u_dependencies.u_register_file.registers[1] !== 32'd10)
@@ -312,6 +321,37 @@ module processor_tb;
             $fatal(1, "long arithmetic benchmark result mismatch");
         $display("PASS: 64-instruction independent arithmetic stream");
 
+        if (u_independent_50.perf_instructions_retired != 50 ||
+            u_independent_50.perf_instructions_completed_wb != 50 ||
+            u_independent_50.perf_total_cycles != 54 ||
+            u_independent_50.perf_stall_cycles != 0 ||
+            u_independent_50.perf_branch_flushes != 0 ||
+            u_independent_50.u_register_file.registers[19] !== 32'd50)
+            $fatal(1, "50-instruction independent benchmark incorrect");
+        if (u_independent_100.perf_instructions_retired != 100 ||
+            u_independent_100.perf_instructions_completed_wb != 100 ||
+            u_independent_100.perf_total_cycles != 104 ||
+            u_independent_100.perf_stall_cycles != 0 ||
+            u_independent_100.perf_branch_flushes != 0 ||
+            u_independent_100.u_register_file.registers[7] !== 32'd100)
+            $fatal(1, "100-instruction independent benchmark incorrect");
+        if (u_dependent_50.perf_instructions_retired != 50 ||
+            u_dependent_50.perf_instructions_completed_wb != 50 ||
+            u_dependent_50.perf_total_cycles != 54 ||
+            u_dependent_50.perf_stall_cycles != 0 ||
+            u_dependent_50.perf_branch_flushes != 0 ||
+            u_dependent_50.u_register_file.registers[1] !== 32'd50)
+            $fatal(1, "50-instruction dependent benchmark incorrect");
+        if (u_branch_heavy.perf_instructions_retired != 13 ||
+            u_branch_heavy.perf_instructions_completed_wb != 13 ||
+            u_branch_heavy.perf_branch_flushes != 4 ||
+            u_branch_heavy.perf_taken_branches != 4 ||
+            u_branch_heavy.perf_not_taken_branches != 1 ||
+            u_branch_heavy.u_register_file.registers[1] !== 32'd5 ||
+            u_branch_heavy.u_register_file.registers[3] !== 32'd7)
+            $fatal(1, "branch-heavy benchmark incorrect");
+        $display("PASS: 50/100 independent, 50 dependent, and branch-heavy benchmarks");
+
         performance_file = $fopen("simulation/performance.csv", "w");
         if (performance_file == 0)
             $fatal(1, "could not create simulation/performance.csv");
@@ -341,6 +381,22 @@ module processor_tb;
             u_long_arithmetic.perf_instructions_completed_wb,
             u_long_arithmetic.perf_stall_cycles, u_long_arithmetic.perf_branch_flushes,
             u_long_arithmetic.perf_taken_branches, u_long_arithmetic.perf_not_taken_branches);
+        report_benchmark("independent_50", u_independent_50.perf_total_cycles,
+            u_independent_50.perf_instructions_retired, u_independent_50.perf_instructions_completed_wb,
+            u_independent_50.perf_stall_cycles, u_independent_50.perf_branch_flushes,
+            u_independent_50.perf_taken_branches, u_independent_50.perf_not_taken_branches);
+        report_benchmark("independent_100", u_independent_100.perf_total_cycles,
+            u_independent_100.perf_instructions_retired, u_independent_100.perf_instructions_completed_wb,
+            u_independent_100.perf_stall_cycles, u_independent_100.perf_branch_flushes,
+            u_independent_100.perf_taken_branches, u_independent_100.perf_not_taken_branches);
+        report_benchmark("dependent_50", u_dependent_50.perf_total_cycles,
+            u_dependent_50.perf_instructions_retired, u_dependent_50.perf_instructions_completed_wb,
+            u_dependent_50.perf_stall_cycles, u_dependent_50.perf_branch_flushes,
+            u_dependent_50.perf_taken_branches, u_dependent_50.perf_not_taken_branches);
+        report_benchmark("branch_heavy", u_branch_heavy.perf_total_cycles,
+            u_branch_heavy.perf_instructions_retired, u_branch_heavy.perf_instructions_completed_wb,
+            u_branch_heavy.perf_stall_cycles, u_branch_heavy.perf_branch_flushes,
+            u_branch_heavy.perf_taken_branches, u_branch_heavy.perf_not_taken_branches);
         $fclose(performance_file);
         $display("PASS: retirement, stall, bubble, and flush counter assertions");
 
