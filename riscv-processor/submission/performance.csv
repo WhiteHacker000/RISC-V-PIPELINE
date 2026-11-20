@@ -1,0 +1,11 @@
+benchmark,cycles,retired,wb_completed,stalls,branch_flushes,taken_branches,not_taken_branches
+independent,9,5,5,0,0,0,0
+dependent,10,6,6,0,0,0,0
+load_use,9,4,4,1,0,0,0
+branches,15,7,7,0,2,2,1
+three_addi,7,3,3,0,0,0,0
+long_arithmetic,68,64,64,0,0,0,0
+independent_50,54,50,50,0,0,0,0
+independent_100,104,100,100,0,0,0,0
+dependent_50,54,50,50,0,0,0,0
+branch_heavy,25,13,13,0,4,4,1

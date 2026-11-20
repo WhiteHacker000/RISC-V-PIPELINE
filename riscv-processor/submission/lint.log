@@ -1,0 +1,46 @@
+cd /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor && verilator --lint-only --timing --top-module riscv_top -Wall -Wno-fatal /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/alu.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/control_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/data_memory.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/forwarding_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/hazard_detection_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/immediate_generator.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/instruction_memory.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/main_decoder.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/program_counter.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/register_file.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/ex_mem.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/id_ex.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/if_id.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/mem_wb.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv
+%Warning-EOFNEWLINE: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/alu.sv:24:10: Missing newline at end of file (POSIX 3.206).
+                                                                                                               : ... Suggest add newline.
+   24 | endmodule
+      |          ^
+                     ... For warning description see https://verilator.org/warn/EOFNEWLINE?v=5.054
+                     ... Use "/* verilator lint_off EOFNEWLINE */" and lint_on around source to disable this message.
+%Warning-PINCONNECTEMPTY: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:226:10: Instance pin connected by name with empty reference: 'alu_op'
+  226 |         .alu_op(),
+      |          ^~~~~~
+                          ... For warning description see https://verilator.org/warn/PINCONNECTEMPTY?v=5.054
+                          ... Use "/* verilator lint_off PINCONNECTEMPTY */" and lint_on around source to disable this message.
+%Warning-UNUSEDSIGNAL: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:66:18: Signal is not used: 'exmem_branch_target'
+                                                                                                            : ... note: In instance 'riscv_top'
+   66 |     logic [31:0] exmem_branch_target;
+      |                  ^~~~~~~~~~~~~~~~~~~
+                       ... For warning description see https://verilator.org/warn/UNUSEDSIGNAL?v=5.054
+                       ... Use "/* verilator lint_off UNUSEDSIGNAL */" and lint_on around source to disable this message.
+%Warning-UNUSEDSIGNAL: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:67:11: Signal is not used: 'exmem_branch_taken'
+                                                                                                            : ... note: In instance 'riscv_top'
+   67 |     logic exmem_branch_taken;
+      |           ^~~~~~~~~~~~~~~~~~
+%Warning-UNUSEDSIGNAL: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:73:18: Signal is not used: 'exmem_pc_plus4'
+                                                                                                            : ... note: In instance 'riscv_top'
+   73 |     logic [31:0] exmem_pc_plus4;
+      |                  ^~~~~~~~~~~~~~
+%Warning-UNUSEDSIGNAL: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:85:11: Signal is not used: 'load_use_stall'
+                                                                                                            : ... note: In instance 'riscv_top'
+   85 |     logic load_use_stall;
+      |           ^~~~~~~~~~~~~~
+%Warning-UNUSEDSIGNAL: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/immediate_generator.sv:2:25: Bits of signal are not used: 'instruction'[19:12]
+                                                                                                                                : ... note: In instance 'riscv_top.u_immediate_generator'
+    2 |     input  logic [31:0] instruction,
+      |                         ^~~~~~~~~~~
+%Warning-SYNCASYNCNET: /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:9:17: Signal flopped as both synchronous and async: 'rst_n'
+                       /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/program_counter.sv:12:14: ... Location of async usage
+   12 |         if (!rst_n)
+      |              ^~~~~
+                       /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv:130:14: ... Location of sync usage
+  130 |         if (!rst_n) begin
+      |              ^~~~~
+                       ... For warning description see https://verilator.org/warn/SYNCASYNCNET?v=5.054
+                       ... Use "/* verilator lint_off SYNCASYNCNET */" and lint_on around source to disable this message.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.441 MB sources in 17 modules, into 0.011 MB in 3 C++ files needing 0.000 MB
+- Verilator: Walltime 0.051 s (elab=0.013, cvt=0.012, bld=0.000); cpu 0.023 s on 1 threads; allocated 13.250 MB

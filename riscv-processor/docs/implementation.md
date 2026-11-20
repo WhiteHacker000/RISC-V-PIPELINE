@@ -93,6 +93,22 @@ The processor is a focused educational implementation, not a complete RV32I
 implementation: exceptions, interrupts, byte/halfword memory operations, and
 other RV32I instructions are outside its scope.
 
+## Integrated control signals
+
+| Signal | Meaning in the integrated RTL |
+|---|---|
+| `stall_pc`, `stall_ifid` | Asserted together for a one-cycle load-use dependency; PC and IF/ID hold their values. |
+| `flush_idex` | Inserts a control-zero bubble after load-use detection; also asserted for a taken branch. |
+| `ex_branch_taken` | EX branch control and ALU equality result request the redirect; this drives PC redirect and IF/ID flush. |
+| `forward_a`, `forward_b` | Select ID/EX (`00`), MEM/WB write-back (`01`) or EX/MEM ALU result (`10`); EX/MEM has priority. |
+| `decode_rs1_data`, `decode_rs2_data` | Register-file values with a same-cycle WB-to-ID bypass for nonzero destinations. |
+| `ifid_perf_valid` … `memwb_perf_valid` | Simulation validity tags aligned with IF/ID and the three later pipeline registers. |
+| `perf_instructions_retired` | Counts valid instructions in MEM/WB, including SW, branches and literal NOPs. |
+
+`flush_idex` is the ID/EX control input. Branch flush on IF/ID is driven
+directly by `ex_branch_taken`. The performance-valid tags follow the same stall
+and redirect conditions, so bubbles and wrong-path instructions do not retire.
+
 ## Verification
 
 ### Testbench Strategy
@@ -103,14 +119,14 @@ other RV32I instructions are outside its scope.
 - Test programs in programs/ directory
 
 ### Test Programs
-- arithmetic.hex: ADD, SUB, AND, OR, XOR, shifts
-- memory.hex: LW, SW, LB, LH, SB, SH
-- branch.hex: BEQ, BNE, BLT, BGE, JAL, JALR
+- `programs/processor_*.hex`: arithmetic, memory, branch, load-use and performance streams.
+- `programs/termination_*.hex`: literal-NOP termination regression cases.
+- `programs/verif_*.hex`: generated pipeline corner and reset cases.
 
-### Reference Model
-- Python-based ISS (Instruction Set Simulator)
-- Compares register/memory state after each instruction
-- Located in verification/reference_model.py
+No instruction-set simulator is currently implemented; `verification/reference_model.py`
+is an empty placeholder and is not part of the regression. Architectural results
+are checked with directed SystemVerilog assertions and expected register/memory
+state in the testbenches.
 
 ## Synthesis Considerations
 
