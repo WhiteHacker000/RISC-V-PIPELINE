@@ -1,0 +1,357 @@
+== alu_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.018 s (elab=0.000, cvt=0.000, bld=0.016); cpu 0.001 s on 1 threads; allocated 3.547 MB
+
+========== ALU TESTING STARTED ==========
+
+PASS | OP=000 | A=0000000a | B=00000014 | RESULT=0000001e
+PASS | OP=001 | A=0000001e | B=0000000a | RESULT=00000014
+PASS | OP=010 | A=0000ff00 | B=00000ff0 | RESULT=00000f00
+PASS | OP=011 | A=0000f000 | B=000000ff | RESULT=0000f0ff
+PASS | OP=100 | A=0000aaaa | B=00005555 | RESULT=0000ffff
+PASS | OP=101 | A=ffffffff | B=00000001 | RESULT=00000001
+PASS | OP=110 | A=ffffffff | B=00000001 | RESULT=00000000
+PASS | OP=000 | A=ffffffff | B=00000001 | RESULT=00000000
+PASS | OP=001 | A=00000064 | B=00000064 | RESULT=00000000
+PASS | OP=111 | A=0000000a | B=00000014 | RESULT=00000000
+
+========== TEST SUMMARY ==========
+PASSED: 10
+FAILED: 0
+ALU VERIFICATION SUCCESSFUL
+- testbench/alu_tb.sv:106: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 10ps; walltime 0.000 s; speed 82.645 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS alu_tb
+== register_file_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.015 s (elab=0.000, cvt=0.000, bld=0.014); cpu 0.001 s on 1 threads; allocated 3.562 MB
+register_file_tb PASS
+- testbench/register_file_tb.sv:58: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 17ps; walltime 0.000 s; speed 894.737 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS register_file_tb
+== immediate_generator_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.562 MB
+immediate_generator_tb PASS
+- testbench/immediate_generator_tb.sv:46: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 5ps; walltime 0.000 s; speed 250.000 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS immediate_generator_tb
+== instruction_memory_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.547 MB
+instruction_memory_tb PASS
+- testbench/instruction_memory_tb.sv:58: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 6ps; walltime 0.000 s; speed 24.793 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS instruction_memory_tb
+== data_memory_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.014); cpu 0.001 s on 1 threads; allocated 3.531 MB
+data_memory_tb PASS
+- testbench/data_memory_tb.sv:64: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 19ps; walltime 0.000 s; speed 1.056 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS data_memory_tb
+== main_decoder_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.015 s (elab=0.000, cvt=0.000, bld=0.014); cpu 0.001 s on 1 threads; allocated 3.547 MB
+main_decoder_tb PASS
+- testbench/main_decoder_tb.sv:47: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 6ps; walltime 0.000 s; speed 333.333 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS main_decoder_tb
+== control_unit_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.547 MB
+control_unit_tb PASS
+- testbench/control_unit_tb.sv:71: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 8ps; walltime 0.000 s; speed 400.000 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS control_unit_tb
+== program_counter_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.547 MB
+program_counter_tb PASS
+- testbench/program_counter_tb.sv:56: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 36ps; walltime 0.000 s; speed 1.636 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS program_counter_tb
+== if_id_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.547 MB
+if_id_tb PASS
+- testbench/if_id_tb.sv:89: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 56ps; walltime 0.000 s; speed 2.667 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS if_id_tb
+== id_ex_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.562 MB
+id_ex_tb PASS
+- testbench/id_ex_tb.sv:129: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 56ps; walltime 0.000 s; speed 2.947 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS id_ex_tb
+== ex_mem_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.578 MB
+ex_mem_tb PASS
+- testbench/ex_mem_tb.sv:106: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 56ps; walltime 0.000 s; speed 2.545 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS ex_mem_tb
+== mem_wb_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.578 MB
+mem_wb_tb PASS
+- testbench/mem_wb_tb.sv:88: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 56ps; walltime 0.000 s; speed 2.947 us/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS mem_wb_tb
+== forwarding_unit_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.014); cpu 0.001 s on 1 threads; allocated 3.547 MB
+forwarding_unit_tb PASS
+- testbench/forwarding_unit_tb.sv:27: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 13ps; walltime 0.000 s; speed 684.211 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS forwarding_unit_tb
+== hazard_detection_unit_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.016); cpu 0.001 s on 1 threads; allocated 3.578 MB
+hazard_detection_unit_tb PASS
+- testbench/hazard_detection_unit_tb.sv:27: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 12ps; walltime 0.000 s; speed 631.579 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS hazard_detection_unit_tb
+== termination_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.016); cpu 0.001 s on 1 threads; allocated 3.547 MB
+PASS: explicit program termination, literal NOP retirement and pipeline drain
+TERMINATION COUNTS: nop_middle=3 nop_end=2 no_nop=2 dependent=3
+- testbench/termination_tb.sv:71: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 101ps; walltime 0.001 s; speed 69.751 ns/s
+- Verilator: cpu 0.000 s on 1 threads; allocated 2 MB
+PASS termination_tb
+== processor_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.016 s (elab=0.000, cvt=0.000, bld=0.015); cpu 0.001 s on 1 threads; allocated 3.562 MB
+PASS: dependent ALU/store/load sequence
+PASS: independent pipeline overlap and write ordering
+PASS: load-use interlock and forwarding
+PASS: BEQ/BNE redirects, not-taken path, and flushes
+PASS: three-ADDI pipeline flow IF/ID=111 ID/EX=111 EX/MEM=111 MEM/WB=111
+OBSERVED FINAL REGISTERS: x1=1 x2=3 x3=6
+PASS: three-ADDI forwarding and ordered write-back
+PASS: 64-instruction independent arithmetic stream
+PASS: 50/100 independent, 50 dependent, and branch-heavy benchmarks
+PERF,independent,cycles=9,retired=5,wb_completed=5,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.800,IPC=0.556
+PERF,dependent,cycles=10,retired=6,wb_completed=6,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.667,IPC=0.600
+PERF,load_use,cycles=9,retired=4,wb_completed=4,stalls=1,branch_flushes=0,taken=0,not_taken=0,CPI=2.250,IPC=0.444
+PERF,branches,cycles=15,retired=7,wb_completed=7,stalls=0,branch_flushes=2,taken=2,not_taken=1,CPI=2.143,IPC=0.467
+PERF,three_addi,cycles=7,retired=3,wb_completed=3,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=2.333,IPC=0.429
+PERF,long_arithmetic,cycles=68,retired=64,wb_completed=64,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.062,IPC=0.941
+PERF,independent_50,cycles=54,retired=50,wb_completed=50,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.080,IPC=0.926
+PERF,independent_100,cycles=104,retired=100,wb_completed=100,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.040,IPC=0.962
+PERF,dependent_50,cycles=54,retired=50,wb_completed=50,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.080,IPC=0.926
+PERF,branch_heavy,cycles=25,retired=13,wb_completed=13,stalls=0,branch_flushes=4,taken=4,not_taken=1,CPI=1.923,IPC=0.520
+PASS: retirement, stall, bubble, and flush counter assertions
+PROCESSOR INTEGRATION TESTS PASSED
+- testbench/processor_tb.sv:404: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 1ns; walltime 0.004 s; speed 348.949 ns/s
+- Verilator: cpu 0.002 s on 1 threads; allocated 2 MB
+PASS processor_tb
+== pipeline_corner_tb ==
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.017 s (elab=0.000, cvt=0.000, bld=0.016); cpu 0.001 s on 1 threads; allocated 3.547 MB
+PASS: cold reset clears PC, pipeline controls and counters
+PASS: mid-program reset suppresses in-flight store and register write
+PASS: x0 writes discarded; x0 never forwarded, bypassed or load-use stalled
+PASS: forwarding priority EX/MEM over MEM/WB for rs1, rs2, store data and base
+PASS: 10-deep dependent chain with dual-source forwarding and WB->ID bypass
+PASS: load-use stalls on load base, rs2, store data, store base and branch; no false stalls
+PASS: loop and forward-operand branches flush wrong-path ALU, store and branch
+PASS: restart after mid-program reset matches cold-start reference
+PIPELINE CORNER-CASE TESTS PASSED
+- testbench/pipeline_corner_tb.sv:476: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 551ps; walltime 0.002 s; speed 229.871 ns/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 2 MB
+PASS pipeline_corner_tb
+Measured simulation counters (not hardware timing estimates):
+[
+  {
+    "benchmark": "independent",
+    "cycles": 9,
+    "retired": 5,
+    "wb_completed": 5,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.8,
+    "IPC": 0.5555555555555556
+  },
+  {
+    "benchmark": "dependent",
+    "cycles": 10,
+    "retired": 6,
+    "wb_completed": 6,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.6666666666666667,
+    "IPC": 0.6
+  },
+  {
+    "benchmark": "load_use",
+    "cycles": 9,
+    "retired": 4,
+    "wb_completed": 4,
+    "stalls": 1,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 2.25,
+    "IPC": 0.4444444444444444
+  },
+  {
+    "benchmark": "branches",
+    "cycles": 15,
+    "retired": 7,
+    "wb_completed": 7,
+    "stalls": 0,
+    "branch_flushes": 2,
+    "taken_branches": 2,
+    "not_taken_branches": 1,
+    "CPI": 2.142857142857143,
+    "IPC": 0.4666666666666667
+  },
+  {
+    "benchmark": "three_addi",
+    "cycles": 7,
+    "retired": 3,
+    "wb_completed": 3,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 2.3333333333333335,
+    "IPC": 0.42857142857142855
+  },
+  {
+    "benchmark": "long_arithmetic",
+    "cycles": 68,
+    "retired": 64,
+    "wb_completed": 64,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.0625,
+    "IPC": 0.9411764705882353
+  },
+  {
+    "benchmark": "independent_50",
+    "cycles": 54,
+    "retired": 50,
+    "wb_completed": 50,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.08,
+    "IPC": 0.9259259259259259
+  },
+  {
+    "benchmark": "independent_100",
+    "cycles": 104,
+    "retired": 100,
+    "wb_completed": 100,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.04,
+    "IPC": 0.9615384615384616
+  },
+  {
+    "benchmark": "dependent_50",
+    "cycles": 54,
+    "retired": 50,
+    "wb_completed": 50,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.08,
+    "IPC": 0.9259259259259259
+  },
+  {
+    "benchmark": "branch_heavy",
+    "cycles": 25,
+    "retired": 13,
+    "wb_completed": 13,
+    "stalls": 0,
+    "branch_flushes": 4,
+    "taken_branches": 4,
+    "not_taken_branches": 1,
+    "CPI": 1.9230769230769231,
+    "IPC": 0.52
+  }
+]
+Wrote /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/docs/performance_results.md and /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/docs/performance_analysis.svg

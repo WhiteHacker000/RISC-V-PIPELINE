@@ -1,0 +1,157 @@
+mkdir -p /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/build /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/simulation
+cd /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor && verilator --binary --timing --trace --top-module processor_tb -Wno-fatal --Mdir /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/build/processor_tb /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/alu.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/control_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/data_memory.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/forwarding_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/hazard_detection_unit.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/immediate_generator.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/instruction_memory.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/main_decoder.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/program_counter.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/components/register_file.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/ex_mem.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/id_ex.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/if_id.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/pipeline_registers/mem_wb.sv /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/rtl/riscv_top.sv testbench/processor_tb.sv
+make[1]: Nothing to be done for `default'.
+- V e r i l a t i o n   R e p o r t: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261101
+- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
+- Verilator: Walltime 0.015 s (elab=0.000, cvt=0.000, bld=0.014); cpu 0.001 s on 1 threads; allocated 3.594 MB
+cd /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor && /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/build/processor_tb/Vprocessor_tb
+PASS: dependent ALU/store/load sequence
+PASS: independent pipeline overlap and write ordering
+PASS: load-use interlock and forwarding
+PASS: BEQ/BNE redirects, not-taken path, and flushes
+PASS: three-ADDI pipeline flow IF/ID=111 ID/EX=111 EX/MEM=111 MEM/WB=111
+OBSERVED FINAL REGISTERS: x1=1 x2=3 x3=6
+PASS: three-ADDI forwarding and ordered write-back
+PASS: 64-instruction independent arithmetic stream
+PASS: 50/100 independent, 50 dependent, and branch-heavy benchmarks
+PERF,independent,cycles=9,retired=5,wb_completed=5,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.800,IPC=0.556
+PERF,dependent,cycles=10,retired=6,wb_completed=6,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.667,IPC=0.600
+PERF,load_use,cycles=9,retired=4,wb_completed=4,stalls=1,branch_flushes=0,taken=0,not_taken=0,CPI=2.250,IPC=0.444
+PERF,branches,cycles=15,retired=7,wb_completed=7,stalls=0,branch_flushes=2,taken=2,not_taken=1,CPI=2.143,IPC=0.467
+PERF,three_addi,cycles=7,retired=3,wb_completed=3,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=2.333,IPC=0.429
+PERF,long_arithmetic,cycles=68,retired=64,wb_completed=64,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.062,IPC=0.941
+PERF,independent_50,cycles=54,retired=50,wb_completed=50,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.080,IPC=0.926
+PERF,independent_100,cycles=104,retired=100,wb_completed=100,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.040,IPC=0.962
+PERF,dependent_50,cycles=54,retired=50,wb_completed=50,stalls=0,branch_flushes=0,taken=0,not_taken=0,CPI=1.080,IPC=0.926
+PERF,branch_heavy,cycles=25,retired=13,wb_completed=13,stalls=0,branch_flushes=4,taken=4,not_taken=1,CPI=1.923,IPC=0.520
+PASS: retirement, stall, bubble, and flush counter assertions
+PROCESSOR INTEGRATION TESTS PASSED
+- testbench/processor_tb.sv:404: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01
+- Verilator: $finish at 1ns; walltime 0.003 s; speed 439.196 ns/s
+- Verilator: cpu 0.002 s on 1 threads; allocated 2 MB
+cd /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor && python3 verification/performance.py simulation/performance.csv
+Measured simulation counters (not hardware timing estimates):
+[
+  {
+    "benchmark": "independent",
+    "cycles": 9,
+    "retired": 5,
+    "wb_completed": 5,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.8,
+    "IPC": 0.5555555555555556
+  },
+  {
+    "benchmark": "dependent",
+    "cycles": 10,
+    "retired": 6,
+    "wb_completed": 6,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.6666666666666667,
+    "IPC": 0.6
+  },
+  {
+    "benchmark": "load_use",
+    "cycles": 9,
+    "retired": 4,
+    "wb_completed": 4,
+    "stalls": 1,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 2.25,
+    "IPC": 0.4444444444444444
+  },
+  {
+    "benchmark": "branches",
+    "cycles": 15,
+    "retired": 7,
+    "wb_completed": 7,
+    "stalls": 0,
+    "branch_flushes": 2,
+    "taken_branches": 2,
+    "not_taken_branches": 1,
+    "CPI": 2.142857142857143,
+    "IPC": 0.4666666666666667
+  },
+  {
+    "benchmark": "three_addi",
+    "cycles": 7,
+    "retired": 3,
+    "wb_completed": 3,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 2.3333333333333335,
+    "IPC": 0.42857142857142855
+  },
+  {
+    "benchmark": "long_arithmetic",
+    "cycles": 68,
+    "retired": 64,
+    "wb_completed": 64,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.0625,
+    "IPC": 0.9411764705882353
+  },
+  {
+    "benchmark": "independent_50",
+    "cycles": 54,
+    "retired": 50,
+    "wb_completed": 50,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.08,
+    "IPC": 0.9259259259259259
+  },
+  {
+    "benchmark": "independent_100",
+    "cycles": 104,
+    "retired": 100,
+    "wb_completed": 100,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.04,
+    "IPC": 0.9615384615384616
+  },
+  {
+    "benchmark": "dependent_50",
+    "cycles": 54,
+    "retired": 50,
+    "wb_completed": 50,
+    "stalls": 0,
+    "branch_flushes": 0,
+    "taken_branches": 0,
+    "not_taken_branches": 0,
+    "CPI": 1.08,
+    "IPC": 0.9259259259259259
+  },
+  {
+    "benchmark": "branch_heavy",
+    "cycles": 25,
+    "retired": 13,
+    "wb_completed": 13,
+    "stalls": 0,
+    "branch_flushes": 4,
+    "taken_branches": 4,
+    "not_taken_branches": 1,
+    "CPI": 1.9230769230769231,
+    "IPC": 0.52
+  }
+]
+Wrote /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/docs/performance_results.md and /Users/whitedarkhost/Documents/RISC-V-PIPELINE/riscv-processor/docs/performance_analysis.svg
