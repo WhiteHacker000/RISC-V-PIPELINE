@@ -13,7 +13,7 @@ benchmark programs, measured CSV and validation evidence for review.
 - `performance.csv` — output produced by the processor testbench counters.
 - `programs/` — benchmark and termination regression instruction streams.
 - `test_results.md` — executed regression commands and outcomes.
-- `build.log`, `test.log` — captured Verilator build and regression transcripts.
+- `build.log`, `run.log`, `test.log` — captured build, integration run and regression transcripts.
 - `lint.log` — complete Verilator diagnostics and classification.
 - `synthesis.log` — complete Yosys structural-check transcript.
 - `requirement_compliance.md` — requirement-by-requirement evidence matrix.

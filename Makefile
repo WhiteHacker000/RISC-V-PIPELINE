@@ -9,7 +9,7 @@ BUILD := $(PROJ)/build
 
 .PHONY: help build run test lint wave synth performance clean
 help:
-	@printf '%s\n' 'build       Compile processor integration simulation' 'run         Run processor simulation and report measured CPI/IPC' 'test        Compile and execute all testbenches' 'performance Analyze the latest simulation performance CSV' 'lint        Run Verilator lint on processor' 'wave        Open processor waveform' 'synth       Run Yosys synthesis checks' 'clean       Remove build outputs'
+	@printf '%s\n' 'build       Compile processor integration simulation' 'run         Run processor simulation and generate performance reports' 'test        Compile and execute all testbenches' 'performance Analyze the latest simulation performance CSV' 'lint        Run Verilator lint on processor' 'wave        Open the waveform from the latest run/test' 'synth       Run Yosys synthesis checks' 'clean       Remove generated build and simulation outputs'
 
 build:
 	mkdir -p $(BUILD) $(PROJ)/simulation
@@ -34,10 +34,14 @@ performance:
 lint:
 	cd $(PROJ) && $(VERILATOR) --lint-only --timing --top-module riscv_top -Wall -Wno-fatal $(RTL)
 wave:
-	cd $(PROJ) && test -s simulation/processor_tb.vcd
+	@if [ ! -s $(PROJ)/simulation/processor_tb.vcd ]; then \
+	  echo "No processor waveform found; run 'make run' or 'make test' first."; \
+	  exit 1; \
+	fi
 	cd $(PROJ) && $(GTKWAVE) simulation/processor_tb.vcd
 synth:
 	cd $(PROJ) && $(YOSYS) -p 'read_verilog -sv $(RTL); hierarchy -check -top riscv_top; proc; check'
 clean:
 	rm -rf $(BUILD) $(PROJ)/obj_dir
-	rm -f $(PROJ)/simulation/*.vcd
+	rm -f $(PROJ)/simulation/alu.vcd $(PROJ)/simulation/processor_tb.vcd \
+	  $(PROJ)/simulation/pipeline_corner_tb.vcd $(PROJ)/simulation/performance.csv
