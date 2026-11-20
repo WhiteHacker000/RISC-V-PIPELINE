@@ -182,19 +182,19 @@ module pipeline_corner_tb;
     logic        rst_restarted;
     logic [31:0] rst_snapshot [1:5];
 
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_x0_protection.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_x0_protection.hex"), .IMEM_PROGRAM_LENGTH(10))
         u_x0 (.clk(clk), .rst_n(rst_n));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_forward_priority.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_forward_priority.hex"), .IMEM_PROGRAM_LENGTH(17))
         u_fwd (.clk(clk), .rst_n(rst_n));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_dependency_chain.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_dependency_chain.hex"), .IMEM_PROGRAM_LENGTH(12))
         u_chain (.clk(clk), .rst_n(rst_n));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_load_use.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_load_use.hex"), .IMEM_PROGRAM_LENGTH(17))
         u_lu (.clk(clk), .rst_n(rst_n));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_branch_flush.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_branch_flush.hex"), .IMEM_PROGRAM_LENGTH(17))
         u_br (.clk(clk), .rst_n(rst_n));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_reset.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_reset.hex"), .IMEM_PROGRAM_LENGTH(6))
         u_rst (.clk(clk), .rst_n(rst_n_mid));
-    riscv_top #(.IMEM_INIT_FILE("programs/verif_reset.hex"))
+    riscv_top #(.IMEM_INIT_FILE("programs/verif_reset.hex"), .IMEM_PROGRAM_LENGTH(6))
         u_rst_ref (.clk(clk), .rst_n(rst_n));
 
     `ATTACH_MONITOR(m_x0, u_x0, rst_n, x0_se, x0_fe);

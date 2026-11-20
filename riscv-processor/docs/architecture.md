@@ -26,3 +26,17 @@ PC --->|  IF  |--->|  ID  |--->|  EX  |--->| MEM  |--->|  WB  |
 ```
 
 Instruction and data memories are separate arrays, avoiding a unified-memory structural conflict. Data memory is word addressed through aligned byte addresses. No cache or architectural exception behavior is implemented.
+
+## Program termination and NOP validity
+
+The simulation harness passes `IMEM_PROGRAM_LENGTH` to each `riscv_top` instance.
+Instruction memory reports a fetched word as valid when its aligned word address
+is below that length. The instruction bits do not determine validity: the
+canonical `0x00000013` NOP is therefore a normal valid `ADDI x0,x0,0` within a
+program. Fetches at and after the program length return the same NOP bits but
+carry `instruction_valid=0`. Validity advances beside IF/ID, ID/EX, EX/MEM and
+MEM/WB, holding on a stall and clearing on a flush. Simulation completion is
+reported only after no valid fetch or pipeline entry remains, so final valid
+instructions drain through WB. The testbench must provide a length matching the
+number of instruction words in the loaded file; this is a simulation contract,
+not an ISA instruction or datapath control.

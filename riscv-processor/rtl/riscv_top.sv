@@ -1,6 +1,7 @@
 module riscv_top #(
     parameter IMEM_INIT_FILE = "",
     parameter int IMEM_DEPTH = 256,
+    parameter int IMEM_PROGRAM_LENGTH = IMEM_DEPTH,
     parameter int DMEM_WORD_COUNT = 256,
     parameter DMEM_INIT_FILE = ""
 ) (
@@ -10,6 +11,7 @@ module riscv_top #(
     logic [31:0] pc_current;
     logic [31:0] pc_plus4;
     logic [31:0] instruction_fetch;
+    logic instruction_fetch_valid;
     logic [31:0] ifid_pc;
     logic [31:0] ifid_pc_plus4;
     logic [31:0] ifid_instruction;
@@ -87,8 +89,9 @@ module riscv_top #(
     logic stall_ifid;
     logic flush_idex;
 
-    // Validity travels beside the datapath so retirement excludes bubbles,
-    // flushed instructions, and the canonical NOP used to fill empty IMEM.
+    // Validity travels beside the datapath so retirement excludes bubbles and
+    // flushed instructions. Fetch validity is based on explicit program length,
+    // so a literal canonical NOP remains a valid instruction.
     logic ifid_perf_valid;
     logic idex_perf_valid;
     logic exmem_perf_valid;
@@ -117,11 +120,9 @@ module riscv_top #(
     assign ex_branch_target = idex_pc + idex_immediate;
     assign ex_branch_taken = idex_branch &&
         (idex_branch_not_equal ? !ex_alu_zero : ex_alu_zero);
-    assign perf_decode_valid = ifid_perf_valid &&
-        (decode_reg_write || decode_mem_read || decode_mem_write || decode_branch);
+    assign perf_decode_valid = ifid_perf_valid;
     assign perf_pipeline_active = ifid_perf_valid || idex_perf_valid ||
-        exmem_perf_valid || memwb_perf_valid ||
-        (instruction_fetch != 32'h0000_0013);
+        exmem_perf_valid || memwb_perf_valid || instruction_fetch_valid;
 
     // Keep validity aligned with the four datapath pipeline registers.
     // IF/ID holds valid during a stall; branch flush and ID/EX bubble have priority.
@@ -144,7 +145,7 @@ module riscv_top #(
             if (ex_branch_taken)
                 ifid_perf_valid <= 1'b0;
             else if (!stall_ifid)
-                ifid_perf_valid <= (instruction_fetch != 32'h0000_0013);
+                ifid_perf_valid <= instruction_fetch_valid;
 
             if (flush_idex)
                 idex_perf_valid <= 1'b0;
@@ -154,7 +155,7 @@ module riscv_top #(
             exmem_perf_valid <= idex_perf_valid;
             memwb_perf_valid <= exmem_perf_valid;
 
-            if (instruction_fetch != 32'h0000_0013)
+            if (instruction_fetch_valid)
                 perf_started <= 1'b1;
             if (perf_started && !perf_pipeline_active)
                 perf_done <= 1'b1;
@@ -191,10 +192,12 @@ module riscv_top #(
     instruction_memory #(
         .ADDR_WIDTH(32),
         .DEPTH(IMEM_DEPTH),
+        .PROGRAM_LENGTH(IMEM_PROGRAM_LENGTH),
         .INIT_FILE(IMEM_INIT_FILE)
     ) u_instruction_memory (
         .address(pc_current),
-        .instruction(instruction_fetch)
+        .instruction(instruction_fetch),
+        .instruction_valid(instruction_fetch_valid)
     );
 
     if_id u_if_id (
