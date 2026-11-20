@@ -8,8 +8,15 @@ A single-issue IF → ID → EX → MEM → WB processor for a seven-instruction
 
 | | |
 |---|---|
-| 🎬 **Video** (6½ min) | [Watch on Google Drive](https://drive.google.com/drive/folders/1_Lv2R95_BsK64Xsrql8XuYi4kilvtcWr) |
-| 📄 **Report** (IEEE format, 8 pages) | [docs/report/report.pdf](docs/report/report.pdf) · [LaTeX source](docs/report/report.tex) |
+| 🎬 **Video** | [Open the Google Drive folder](https://drive.google.com/drive/folders/1_Lv2R95_BsK64Xsrql8XuYi4kilvtcWr) |
+| 📄 **Baseline project report** | [docs/report/report.pdf](docs/report/report.pdf) · [LaTeX source](docs/report/report.tex) |
+
+The IEEE report is a team-authored snapshot from before explicit program-length
+termination and the extended benchmarks. Its earlier 16-test count and NOP
+handling notes are historical; the current verification and performance
+documents linked below are the release results. The report's separate
+pre-place-and-route resource estimate was generated separately from the current
+`make synth` target, which performs structural checks only.
 
 ## Team
 
@@ -23,9 +30,9 @@ A single-issue IF → ID → EX → MEM → WB processor for a seven-instruction
 
 ## Results at a glance
 
-- **Verification:** `make test` runs 16 self-checking testbenches (14 unit, 2 integration), and all pass. Mutation testing injects 14 hazard, flush and reset bugs; the integration suite detects all 14. See [verification.md](riscv-processor/docs/verification.md).
-- **Performance:** measured cycles equal *N + 4 + stalls + 2 × taken branches* on every benchmark. CPI is 1.67–2.33 on the short programs and 1.06 on a 64-instruction stream. See [performance_results.md](riscv-processor/docs/performance_results.md) and [performance_analysis.md](riscv-processor/docs/performance_analysis.md).
-- **Synthesis:** Yosys `synth_xilinx` estimates about 469 LUTs and 349 flip-flops for a Xilinx 7-series target (details in the report). Maximum clock frequency has not been measured.
+- **Verification:** the current `make test` suite has 17 testbenches (14 unit, one termination, two integration); all pass. The earlier mutation check reported all 14 injected bugs detected. See [verification.md](riscv-processor/docs/verification.md).
+- **Performance:** the 100-instruction independent stream measured CPI 1.04; the 50-instruction independent and dependent streams each measured CPI 1.08. The CSV includes the short tests, load-use and branch-heavy measurements. See [performance_results.md](riscv-processor/docs/performance_results.md) and [performance_analysis.md](riscv-processor/docs/performance_analysis.md).
+- **Synthesis:** current `make synth` completed Yosys hierarchy and structural checks with zero reported problems. It does not perform technology mapping or timing analysis; maximum clock frequency has not been measured.
 
 ## Repository layout
 
@@ -45,7 +52,7 @@ Makefile          build, test, run, lint, synth, wave
 Requires Verilator 5.x and GNU Make (Yosys for `make synth`). Run from the repository root:
 
 ```sh
-make test     # build and run all 16 testbenches
+make test     # build and run all 17 testbenches
 make run      # integration simulation and CPI/IPC report
 make wave     # open the waveform in GTKWave (after make run)
 ```
